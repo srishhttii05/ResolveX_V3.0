@@ -8,6 +8,7 @@ import RecentReports from "@/components/RecentReports";
 import heroImage from "@/assets/hero-community.jpg";
 import wasteImage from "@/assets/waste-reporting.jpg";
 import waterImage from "@/assets/water-testing.jpg";
+import LiveEnvironmentalMap from "@/components/LiveEnvironmentalMap";
 
 const Index = () => {
   return (
@@ -156,34 +157,27 @@ const Index = () => {
       </section>
 
       {/* Map Preview Section */}
-      <section className="py-16 bg-muted/30">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-foreground mb-4">
-              Live Environmental Map
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Real-time visualization of waste reports and water quality across your community
-            </p>
-          </div>
-          
-          <Card className="max-w-6xl mx-auto shadow-elevated">
-            <CardContent className="p-0">
-              <div className="aspect-video bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 flex items-center justify-center rounded-lg">
-                <div className="text-center p-8">
-                  <Map className="h-24 w-24 text-primary mx-auto mb-4 opacity-50" />
-                  <p className="text-xl font-semibold text-muted-foreground mb-2">
-                    Interactive Map Coming Soon
-                  </p>
-                  <p className="text-muted-foreground">
-                    Heatmaps, real-time alerts, and contamination zones
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+<section className="py-16 bg-muted/30">
+  <div className="container mx-auto px-4">
+    <div className="text-center mb-12">
+      <h2 className="text-4xl font-bold text-foreground mb-4">
+        Live Environmental Map
+      </h2>
+      <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+        Real-time visualization of waste reports and water quality across your community
+      </p>
+    </div>
+
+    <Card className="max-w-6xl mx-auto shadow-elevated overflow-hidden">
+      <CardContent className="p-0">
+        <div className="aspect-video w-full">
+          <LiveEnvironmentalMap />
         </div>
-      </section>
+      </CardContent>
+    </Card>
+  </div>
+</section>
+
 
       {/* Community Stats Section */}
       <section className="py-16 bg-background">
