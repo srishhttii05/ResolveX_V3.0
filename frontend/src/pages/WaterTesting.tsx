@@ -1,6 +1,6 @@
 // --- Imports ---
 import { useState } from "react";
-// <-- NEW: Added Loader2 for loading spinner, CheckCircle and XCircle for modal
+// <-- (Imports are unchanged from your last version)
 import {
   Droplet,
   MapPin,
@@ -27,7 +27,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-// <-- NEW: Added Dialog components for the modal
 import {
   Dialog,
   DialogContent,
@@ -43,7 +42,7 @@ import Header from "@/components/Header";
 import WaterAnalytics from "@/components/WaterAnalytics";
 import WaterQualityHeatMap from "@/components/WaterQualityHeatMap";
 
-// <-- NEW: Define a type for our prediction results
+// (PredictionResult type is unchanged)
 type PredictionResult = {
   status: "Good" | "Poor" | "Moderate";
   ph: number | null;
@@ -57,20 +56,26 @@ const WaterTesting = () => {
 
   // --- Form States ---
   const [location, setLocation] = useState("");
-  const [source, setSource] = useState(""); // <-- NEW
-  const [ph, setPh] = useState(""); // <-- NEW
-  const [turbidity, setTurbidity] = useState(""); // <-- NEW
-  const [oxygen, setOxygen] = useState(""); // <-- NEW
-  const [temperature, setTemperature] = useState(""); // <-- NEW
-  const [nitrate, setNitrate] = useState(""); // <-- NEW
-  const [coliform, setColiform] = useState(""); // <-- NEW
+  const [source, setSource] = useState("");
+  const [ph, setPh] = useState("");
+  const [turbidity, setTurbidity] = useState("");
+  const [coliform, setColiform] = useState("");
+  // <-- REMOVED: oxygen, temperature, nitrate states
+  // const [oxygen, setOxygen] = useState("");
+  // const [temperature, setTemperature] = useState("");
+  // const [nitrate, setNitrate] = useState("");
+
+  // <-- NEW: Added states for new parameters
+  const [tds, setTds] = useState("");
+  const [conductivity, setConductivity] = useState("");
+  const [hardness, setHardness] = useState("");
 
   // --- UI/Modal States ---
   const [isFetchingLocation, setIsFetchingLocation] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false); // <-- NEW: For submit loader
-  const [isModalOpen, setIsModalOpen] = useState(false); // <-- NEW: To control modal
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [predictionResult, setPredictionResult] =
-    useState<PredictionResult | null>(null); // <-- NEW: To hold modal data
+    useState<PredictionResult | null>(null);
 
   // --- Geolocation Function (Unchanged) ---
   const getCurrentLocation = () => {
@@ -106,11 +111,12 @@ const WaterTesting = () => {
     }
   };
 
-  // <-- NEW: Mock prediction function to simulate analysis
+  // <-- MODIFIED: Mock prediction function (removed nitrate logic)
   const generateMockPrediction = (): PredictionResult => {
     const numPh = parseFloat(ph) || 7;
     const numTurbidity = parseFloat(turbidity) || 1;
-    const numNitrate = parseFloat(nitrate) || 1;
+    // <-- REMOVED: numNitrate
+    // const numNitrate = parseFloat(nitrate) || 1;
 
     let status: PredictionResult["status"] = "Good";
     let recommendations: string[] = ["Water appears safe for general use."];
@@ -119,7 +125,8 @@ const WaterTesting = () => {
       numPh < 6.5 ||
       numPh > 8.5 ||
       numTurbidity > 5 ||
-      numNitrate > 10 ||
+      // <-- REMOVED: nitrate check
+      // numNitrate > 10 ||
       coliform === "present" ||
       coliform === "high"
     ) {
@@ -146,7 +153,7 @@ const WaterTesting = () => {
     };
   };
 
-  // <-- MODIFIED: Updated handleSubmit to show loader and trigger modal
+  // <-- (handleSubmit is unchanged, but updated the commented-out reset line)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -167,8 +174,9 @@ const WaterTesting = () => {
       });
 
       // Optional: Reset form fields after successful submission
+      // <-- MODIFIED: Updated this commented line
       // setLocation(""); setSource(""); setPh(""); setTurbidity("");
-      // setOxygen(""); setTemperature(""); setNitrate(""); setColiform("");
+      // setTds(""); setConductivity(""); setHardness(""); setColiform("");
     } catch (error) {
       toast({
         title: "Submission Failed",
@@ -217,7 +225,7 @@ const WaterTesting = () => {
                   </CardHeader>
                   <CardContent>
                     <form onSubmit={handleSubmit} className="space-y-6">
-                      {/* Location (This section was already correct) */}
+                      {/* Location (Unchanged) */}
                       <div className="space-y-2">
                         <Label
                           htmlFor="location"
@@ -250,7 +258,7 @@ const WaterTesting = () => {
                         </div>
                       </div>
 
-                      {/* Water Source */}
+                      {/* Water Source (Unchanged) */}
                       <div className="space-y-2">
                         <Label
                           htmlFor="source"
@@ -259,7 +267,6 @@ const WaterTesting = () => {
                           Water Source Type{" "}
                           <span className="text-destructive">*</span>
                         </Label>
-                        {/* <-- MODIFIED: Added value and onValueChange */}
                         <Select
                           required
                           value={source}
@@ -283,14 +290,14 @@ const WaterTesting = () => {
                         </Select>
                       </div>
 
-                      {/* Test Parameters Grid */}
+                      {/* <-- MODIFIED: Test Parameters Grid --> */}
                       <div className="space-y-4">
                         <h3 className="text-lg font-semibold text-foreground">
                           Test Parameters
                         </h3>
 
                         <div className="grid md:grid-cols-2 gap-4">
-                          {/* pH Level */}
+                          {/* pH Level (Unchanged) */}
                           <div className="space-y-2">
                             <Label htmlFor="ph">
                               pH Level{" "}
@@ -298,7 +305,6 @@ const WaterTesting = () => {
                                 (0-14)
                               </span>
                             </Label>
-                            {/* <-- MODIFIED: Added value and onChange */}
                             <Input
                               id="ph"
                               type="number"
@@ -311,7 +317,25 @@ const WaterTesting = () => {
                             />
                           </div>
 
-                          {/* Turbidity */}
+                          {/* <-- NEW: TDS --> */}
+                          <div className="space-y-2">
+                            <Label htmlFor="tds">
+                              TDS{" "}
+                              <span className="text-muted-foreground text-sm">
+                                (ppm)
+                              </span>
+                            </Label>
+                            <Input
+                              id="tds"
+                              type="number"
+                              step="0.1"
+                              placeholder="e.g., 300"
+                              value={tds}
+                              onChange={(e) => setTds(e.target.value)}
+                            />
+                          </div>
+
+                          {/* Turbidity (Unchanged) */}
                           <div className="space-y-2">
                             <Label htmlFor="turbidity">
                               Turbidity{" "}
@@ -319,7 +343,6 @@ const WaterTesting = () => {
                                 (NTU)
                               </span>
                             </Label>
-                            {/* <-- MODIFIED: Added value and onChange */}
                             <Input
                               id="turbidity"
                               type="number"
@@ -330,68 +353,49 @@ const WaterTesting = () => {
                             />
                           </div>
 
-                          {/* Dissolved Oxygen */}
+                          {/* <-- NEW: Conductivity --> */}
                           <div className="space-y-2">
-                            <Label htmlFor="oxygen">
-                              Dissolved Oxygen{" "}
+                            <Label htmlFor="conductivity">
+                              Conductivity{" "}
+                              <span className="text-muted-foreground text-sm">
+                                (μS/cm)
+                              </span>
+                            </Label>
+                            <Input
+                              id="conductivity"
+                              type="number"
+                              step="0.1"
+                              placeholder="e.g., 400"
+                              value={conductivity}
+                              onChange={(e) => setConductivity(e.target.value)}
+                            />
+                          </div>
+
+                          {/* <-- NEW: Hardness --> */}
+                          <div className="space-y-2">
+                            <Label htmlFor="hardness">
+                              Hardness{" "}
                               <span className="text-muted-foreground text-sm">
                                 (mg/L)
                               </span>
                             </Label>
-                            {/* <-- MODIFIED: Added value and onChange */}
                             <Input
-                              id="oxygen"
+                              id="hardness"
                               type="number"
                               step="0.1"
-                              placeholder="e.g., 8.5"
-                              value={oxygen}
-                              onChange={(e) => setOxygen(e.target.value)}
+                              placeholder="e.g., 150"
+                              value={hardness}
+                              onChange={(e) => setHardness(e.target.value)}
                             />
                           </div>
 
-                          {/* Temperature */}
-                          <div className="space-y-2">
-                            <Label htmlFor="temperature">
-                              Temperature{" "}
-                              <span className="text-muted-foreground text-sm">
-                                (°C)
-                              </span>
-                            </Label>
-                            {/* <-- MODIFIED: Added value and onChange */}
-                            <Input
-                              id="temperature"
-                              type="number"
-                              step="0.1"
-                              placeholder="e.g., 25.0"
-                              value={temperature}
-                              onChange={(e) => setTemperature(e.target.value)}
-                            />
-                          </div>
-
-                          {/* Nitrate */}
-                          <div className="space-y-2">
-                            <Label htmlFor="nitrate">
-                              Nitrate{" "}
-                              <span className="text-muted-foreground text-sm">
-                                (mg/L)
-                              </span>
-                            </Label>
-                            {/* <-- MODIFIED: Added value and onChange */}
-                            <Input
-                              id="nitrate"
-                              type="number"
-                              step="0.1"
-                              placeholder="e.g., 10.0"
-                              value={nitrate}
-                              onChange={(e) => setNitrate(e.target.value)}
-                            />
-                          </div>
-
-                          {/* Coliform */}
+                          {/* Coliform (Unchanged) */}
                           <div className="space-y-2">
                             <Label htmlFor="coliform">Coliform Presence</Label>
-                            {/* <-- MODIFIED: Added value and onValueChange */}
-                            <Select value={coliform} onValueChange={setColiform}>
+                            <Select
+                              value={coliform}
+                              onValueChange={setColiform}
+                            >
                               <SelectTrigger>
                                 <SelectValue placeholder="Select status" />
                               </SelectTrigger>
@@ -404,6 +408,8 @@ const WaterTesting = () => {
                               </SelectContent>
                             </Select>
                           </div>
+
+                          {/* <-- REMOVED: Dissolved Oxygen, Temperature, Nitrate --> */}
                         </div>
                       </div>
 
@@ -436,14 +442,13 @@ const WaterTesting = () => {
                         </div>
                       </div>
 
-
-                      {/* <-- MODIFIED: Submit Button with loader */}
+                      {/* Submit Button (Unchanged) */}
                       <Button
                         type="submit"
                         size="lg"
                         className="w-full"
                         variant="secondary"
-                        disabled={isSubmitting} // <-- Disable when loading
+                        disabled={isSubmitting}
                       >
                         {isSubmitting ? (
                           <>
@@ -458,7 +463,7 @@ const WaterTesting = () => {
                   </CardContent>
                 </Card>
 
-                {/* ... (Water Quality Guidelines card is unchanged) ... */}
+                {/* <-- MODIFIED: Water Quality Guidelines card --> */}
                 <Card className="mt-8">
                   <CardHeader>
                     <CardTitle>Water Quality Guidelines</CardTitle>
@@ -468,6 +473,7 @@ const WaterTesting = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="grid md:grid-cols-3 gap-4">
+                      {/* pH Level (Unchanged) */}
                       <div className="p-4 rounded-lg bg-muted/50">
                         <p className="font-semibold text-foreground mb-1">
                           pH Level
@@ -476,6 +482,8 @@ const WaterTesting = () => {
                           Safe: 6.5 - 8.5
                         </p>
                       </div>
+
+                      {/* Turbidity (Unchanged) */}
                       <div className="p-4 rounded-lg bg-muted/50">
                         <p className="font-semibold text-foreground mb-1">
                           Turbidity
@@ -484,22 +492,8 @@ const WaterTesting = () => {
                           Safe: &lt; 5 NTU
                         </p>
                       </div>
-                      <div className="p-4 rounded-lg bg-muted/50">
-                        <p className="font-semibold text-foreground mb-1">
-                          Dissolved Oxygen
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          Safe: &gt; 6 mg/L
-                        </p>
-                      </div>
-                      <div className="p-4 rounded-lg bg-muted/50">
-                        <p className="font-semibold text-foreground mb-1">
-                          Nitrate
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          Safe: &lt; 10 mg/L
-                        </p>
-                      </div>
+                      
+                      {/* Coliform (Unchanged) */}
                       <div className="p-4 rounded-lg bg-muted/50">
                         <p className="font-semibold text-foreground mb-1">
                           Coliform
@@ -508,20 +502,45 @@ const WaterTesting = () => {
                           Safe: Absent
                         </p>
                       </div>
+
+                      {/* <-- NEW: TDS Guideline --> */}
                       <div className="p-4 rounded-lg bg-muted/50">
                         <p className="font-semibold text-foreground mb-1">
-                          Temperature
+                          TDS
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          Normal: 20-30°C
+                          Safe: &lt; 500 ppm
                         </p>
                       </div>
+                      
+                      {/* <-- NEW: Hardness Guideline --> */}
+                      <div className="p-4 rounded-lg bg-muted/50">
+                        <p className="font-semibold text-foreground mb-1">
+                          Hardness
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          Safe: 75 - 150 mg/L
+                        </p>
+                      </div>
+
+                      {/* <-- NEW: Conductivity Guideline --> */}
+                      <div className="p-4 rounded-lg bg-muted/50">
+                        <p className="font-semibold text-foreground mb-1">
+                          Conductivity
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          Varies (often 200-800 μS/cm)
+                        </p>
+                      </div>
+
+                      {/* <-- REMOVED: Dissolved Oxygen, Nitrate, Temperature Guidelines --> */}
                     </div>
                   </CardContent>
                 </Card>
               </div>
             </TabsContent>
 
+            {/* ... (Other TabsContent are unchanged) ... */}
             <TabsContent value="analytics">
               <WaterAnalytics />
             </TabsContent>
@@ -533,7 +552,7 @@ const WaterTesting = () => {
         </div>
       </div>
 
-      {/* --- NEW: Prediction Result Modal --- */}
+      {/* --- (Prediction Result Modal is unchanged, it only uses ph, turbidity, coliform) --- */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
